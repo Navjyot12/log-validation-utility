@@ -82,7 +82,8 @@ export const onCancelSchema = {
             id: {
               type: 'string',
               minLength: 1,
-              pattern: '^[a-zA-Z0-9-]{1,32}$|^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
+              pattern:
+                '^[a-zA-Z0-9-]{1,32}$|^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
               errorMessage: 'Order ID should be alphanumeric upto 32 letters max or UUID',
             },
             state: {
@@ -222,265 +223,576 @@ export const onCancelSchema = {
             },
             fulfillments: {
               type: 'array',
+              minItems: 2,
               items: {
-                type: 'object',
-                properties: {
-                  id: {
-                    type: 'string',
-                    minLength: 1,
-                  },
-                  '@ondc/org/provider_name': {
-                    type: 'string',
-                    minLength: 1,
-                  },
-                  state: {
-                    type: 'object',
-                    properties: {
-                      descriptor: {
-                        type: 'object',
-                        properties: {
-                          code: {
-                            type: 'string',
-                            minLength: 1,
-                            enum: ['Cancelled', 'RTO-Initiated'],
-                          },
-                        },
-                        required: ['code'],
-                      },
-                    },
-                    required: ['descriptor'],
-                  },
-                  type: {
-                    type: 'string',
-                    minLength: 1,
-                  },
-                  tracking: {
-                    type: 'boolean',
-                  },
-                  start: {
-                    type: 'object',
-                    properties: {
-                      location: {
-                        type: 'object',
-                        properties: {
-                          id: {
-                            type: 'string',
-                          },
-                          descriptor: {
-                            type: 'object',
-                            properties: {
-                              name: {
-                                type: 'string',
-                              },
-                            },
-                            required: ['name'],
-                          },
-                          gps: {
-                            type: 'string',
-                          },
-                          address: {
-                            type: 'object',
-                            properties: {
-                              locality: {
-                                type: 'string',
-                                minLength: 1,
-                              },
-                              city: {
-                                type: 'string',
-                                minLength: 1,
-                              },
-                              area_code: {
-                                type: 'string',
-                                minLength: 1,
-                                maxLength: 6,
-                              },
-                              state: {
-                                type: 'string',
-                                minLength: 1,
-                              },
-                            },
-                            required: ['locality', 'city', 'area_code', 'state'],
-                          },
-                        },
-                        required: ['id', 'descriptor', 'gps', 'address'],
-                      },
-                      time: {
-                        type: 'object',
-                        properties: {
-                          range: {
-                            type: 'object',
-                            properties: {
-                              start: {
-                                type: 'string',
-                                format: 'date-time',
-                              },
-                              end: {
-                                type: 'string',
-                                format: 'date-time',
-                              },
-                            },
-                            required: ['start', 'end'],
-                          },
-                        },
-                        required: ['range'],
-                      },
-                      contact: {
-                        type: 'object',
-                        properties: {
-                          phone: {
-                            type: 'string',
-                            minLength: 10,
-                            maxLength: 11,
-                          },
-                          email: {
-                            type: 'string',
-                            format: 'email',
-                          },
-                        },
-                        required: ['phone'],
-                      },
-                    },
-                    required: ['location', 'time', 'contact'],
-                  },
-                  end: {
-                    type: 'object',
-                    properties: {
-                      location: {
-                        type: 'object',
-                        properties: {
-                          gps: {
-                            type: 'string',
-                            minLength: 1,
-                          },
-                          address: {
-                            type: 'object',
-                            properties: {
-                              name: {
-                                type: 'string',
-                                minLength: 1,
-                              },
-                              building: {
-                                type: 'string',
-                                minLength: 1,
-                              },
-                              locality: {
-                                type: 'string',
-                                minLength: 1,
-                              },
-                              city: {
-                                type: 'string',
-                                minLength: 1,
-                              },
-                              state: {
-                                type: 'string',
-                                minLength: 1,
-                              },
-                              country: {
-                                type: 'string',
-                                minLength: 1,
-                              },
-                              area_code: {
-                                type: 'string',
-                                minLength: 1,
-                              },
-                            },
-                            required: ['name', 'building', 'locality', 'city', 'state', 'country', 'area_code'],
-                          },
-                        },
-                        required: ['gps', 'address'],
-                      },
-                      time: {
-                        type: 'object',
-                        properties: {
-                          range: {
-                            type: 'object',
-                            properties: {
-                              start: {
-                                type: 'string',
-                                format: 'date-time',
-                              },
-                              end: {
-                                type: 'string',
-                                format: 'date-time',
-                              },
-                            },
-                            required: ['start', 'end'],
-                          },
-                        },
-                        required: ['range'],
-                      },
-                      person: {
-                        type: 'object',
-                        properties: {
-                          name: {
-                            type: 'string',
-                            minLength: 1,
-                          },
-                        },
-                        required: ['name'],
-                      },
-                      contact: {
-                        type: 'object',
-                        properties: {
-                          phone: {
-                            type: 'string',
-                            minLength: 10,
-                            maxLength: 11,
-                          },
-                          email: {
-                            type: 'string',
-                            format: 'email',
-                          },
-                        },
-                        required: ['phone'],
-                      },
-                    },
-                    required: ['location', 'time', 'person', 'contact'],
-                  },
-                  tags: {
-                    type: 'array',
-                    items: {
+                allOf: [
+                  {
+                    if: {
                       type: 'object',
                       properties: {
-                        code: {
+                        id: {
                           type: 'string',
-                          enum: ['cancel_request', 'igm_request', 'precancel_state', 'quote_trail'],
+                          minLength: 1,
                         },
-                        list: {
+                        '@ondc/org/provider_name': {
+                          type: 'string',
+                          minLength: 1,
+                        },
+                        state: {
+                          type: 'object',
+                          properties: {
+                            descriptor: {
+                              type: 'object',
+                              properties: {
+                                code: {
+                                  type: 'string',
+                                  minLength: 1,
+                                  const: 'Cancelled',
+                                },
+                              },
+                              required: ['code'],
+                            },
+                          },
+                          required: ['descriptor'],
+                        },
+                        type: {
+                          type: 'string',
+                          const: 'Delivery',
+                          minLength: 1,
+                        },
+                        tracking: {
+                          type: 'boolean',
+                        },
+                        start: {
+                          type: 'object',
+                          properties: {
+                            location: {
+                              type: 'object',
+                              properties: {
+                                id: {
+                                  type: 'string',
+                                },
+                                descriptor: {
+                                  type: 'object',
+                                  properties: {
+                                    name: {
+                                      type: 'string',
+                                    },
+                                  },
+                                  required: ['name'],
+                                },
+                                gps: {
+                                  type: 'string',
+                                },
+                                address: {
+                                  type: 'object',
+                                  properties: {
+                                    locality: {
+                                      type: 'string',
+                                      minLength: 1,
+                                    },
+                                    city: {
+                                      type: 'string',
+                                      minLength: 1,
+                                    },
+                                    area_code: {
+                                      type: 'string',
+                                      minLength: 1,
+                                      maxLength: 6,
+                                    },
+                                    state: {
+                                      type: 'string',
+                                      minLength: 1,
+                                    },
+                                  },
+                                  required: ['locality', 'city', 'area_code', 'state'],
+                                },
+                              },
+                              required: ['id', 'descriptor', 'gps', 'address'],
+                            },
+                            time: {
+                              type: 'object',
+                              properties: {
+                                range: {
+                                  type: 'object',
+                                  properties: {
+                                    start: {
+                                      type: 'string',
+                                      format: 'date-time',
+                                    },
+                                    end: {
+                                      type: 'string',
+                                      format: 'date-time',
+                                    },
+                                  },
+                                  required: ['start', 'end'],
+                                },
+                              },
+                              required: ['range'],
+                            },
+                            contact: {
+                              type: 'object',
+                              properties: {
+                                phone: {
+                                  type: 'string',
+                                  minLength: 10,
+                                  maxLength: 11,
+                                },
+                                email: {
+                                  type: 'string',
+                                  format: 'email',
+                                },
+                              },
+                              required: ['phone'],
+                            },
+                          },
+                          required: ['location', 'time', 'contact'],
+                        },
+                        end: {
+                          type: 'object',
+                          properties: {
+                            location: {
+                              type: 'object',
+                              properties: {
+                                gps: {
+                                  type: 'string',
+                                  minLength: 1,
+                                },
+                                address: {
+                                  type: 'object',
+                                  properties: {
+                                    name: {
+                                      type: 'string',
+                                      minLength: 1,
+                                    },
+                                    building: {
+                                      type: 'string',
+                                      minLength: 1,
+                                    },
+                                    locality: {
+                                      type: 'string',
+                                      minLength: 1,
+                                    },
+                                    city: {
+                                      type: 'string',
+                                      minLength: 1,
+                                    },
+                                    state: {
+                                      type: 'string',
+                                      minLength: 1,
+                                    },
+                                    country: {
+                                      type: 'string',
+                                      minLength: 1,
+                                    },
+                                    area_code: {
+                                      type: 'string',
+                                      minLength: 1,
+                                    },
+                                  },
+                                  required: ['name', 'building', 'locality', 'city', 'state', 'country', 'area_code'],
+                                },
+                              },
+                              required: ['gps', 'address'],
+                            },
+                            time: {
+                              type: 'object',
+                              properties: {
+                                range: {
+                                  type: 'object',
+                                  properties: {
+                                    start: {
+                                      type: 'string',
+                                      format: 'date-time',
+                                    },
+                                    end: {
+                                      type: 'string',
+                                      format: 'date-time',
+                                    },
+                                  },
+                                  required: ['start', 'end'],
+                                },
+                              },
+                              required: ['range'],
+                            },
+                            person: {
+                              type: 'object',
+                              properties: {
+                                name: {
+                                  type: 'string',
+                                  minLength: 1,
+                                },
+                              },
+                              required: ['name'],
+                            },
+                            contact: {
+                              type: 'object',
+                              properties: {
+                                phone: {
+                                  type: 'string',
+                                  minLength: 10,
+                                  maxLength: 11,
+                                },
+                                email: {
+                                  type: 'string',
+                                  format: 'email',
+                                },
+                              },
+                              required: ['phone'],
+                            },
+                          },
+                          required: ['location', 'time', 'person', 'contact'],
+                        },
+                        tags: {
                           type: 'array',
                           items: {
                             type: 'object',
                             properties: {
-                              code: {
-                                type: 'string',
-                                enum: [
-                                  'reason_id',
-                                  'initiated_by',
-                                  'fulfillment_state',
-                                  'updated_at',
-                                  'retry_count',
-                                  'rto_id',
-                                  'id',
-                                  'currency',
-                                  'value',
-                                  'type',
-                                  'subtype'
-                                ],
-                              },
-                              value: {
-                                type: 'string',
-                              },
+                              allOf: [
+                                {
+                                  if: {
+                                    properties: {
+                                      code: {
+                                        const: 'cancel_request',
+                                      },
+                                    },
+                                  },
+                                  then: {
+                                    properties: {
+                                      list: {
+                                        type: 'array',
+                                        items: {
+                                          allOf: [
+                                            {
+                                              if: {
+                                                properties: {
+                                                  code: {
+                                                    const: 'retry_count',
+                                                  },
+                                                },
+                                                required: ['code'],
+                                              },
+                                              then: {
+                                                properties: {
+                                                  value: {
+                                                    type: 'string',
+                                                    pattern: '^[1-9]d*$',
+                                                    errorMessage: 'Retry count must be a positive integer.',
+                                                  },
+                                                },
+                                                required: ['value'],
+                                              },
+                                            },
+                                            {
+                                              if: {
+                                                properties: {
+                                                  code: {
+                                                    const: 'rto_id',
+                                                  },
+                                                },
+                                                required: ['code'],
+                                              },
+                                              then: {
+                                                properties: {
+                                                  value: {
+                                                    type: 'string',
+                                                  },
+                                                },
+                                                required: ['value'],
+                                              },
+                                            },
+                                            {
+                                              if: {
+                                                properties: {
+                                                  code: {
+                                                    const: 'reason_id',
+                                                  },
+                                                },
+                                                required: ['code'],
+                                              },
+                                              then: {
+                                                properties: {
+                                                  value: {
+                                                    type: 'string',
+                                                  },
+                                                },
+                                                required: ['value'],
+                                              },
+                                            },
+                                            {
+                                              if: {
+                                                properties: {
+                                                  code: {
+                                                    const: 'initiated_by',
+                                                  },
+                                                },
+                                                required: ['code'],
+                                              },
+                                              then: {
+                                                properties: {
+                                                  value: {
+                                                    type: 'string',
+                                                  },
+                                                },
+                                                required: ['value'],
+                                              },
+                                            },
+                                          ],
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                                {
+                                  if: {
+                                    properties: {
+                                      code: {
+                                        const: 'igm_request',
+                                      },
+                                    },
+                                  },
+                                  then: {
+                                    properties: {
+                                      list: {
+                                        type: 'array',
+                                        minitems: 1,
+                                        items: {
+                                          allOf: [
+                                            {
+                                              if: {
+                                                properties: {
+                                                  code: {
+                                                    const: 'id',
+                                                  },
+                                                },
+                                                required: ['code'],
+                                              },
+                                              then: {
+                                                properties: {
+                                                  value: {
+                                                    type: 'string',
+                                                  },
+                                                },
+                                                required: ['value'],
+                                              },
+                                            },
+                                          ],
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                                {
+                                  if: {
+                                    properties: {
+                                      code: {
+                                        const: 'precancel_state',
+                                      },
+                                    },
+                                  },
+                                  then: {
+                                    properties: {
+                                      list: {
+                                        type: 'array',
+                                        minitems: 2,
+                                        items: {
+                                          allOf: [
+                                            {
+                                              if: {
+                                                properties: {
+                                                  code: {
+                                                    const: 'fulfillment_state',
+                                                  },
+                                                },
+                                                required: ['code'],
+                                              },
+                                              then: {
+                                                properties: {
+                                                  value: {
+                                                    type: 'string',
+                                                  },
+                                                },
+                                                required: ['value'],
+                                              },
+                                            },
+                                            {
+                                              if: {
+                                                properties: {
+                                                  code: {
+                                                    const: 'updated_at',
+                                                  },
+                                                },
+                                                required: ['code'],
+                                              },
+                                              then: {
+                                                properties: {
+                                                  value: {
+                                                    type: 'string',
+                                                  },
+                                                },
+                                                required: ['value'],
+                                              },
+                                            },
+                                          ],
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              ],
                             },
-                            required: ['code', 'value'],
+                            required: ['code', 'list'],
                           },
+                          additionalProperties: false,
+                        },
+                      },                    
+                    },
+                    then:{
+                      required: ['id', 'state', 'type', 'tags', 'start', 'end'],
+                    }
+                  },
+                  {
+                    if: {
+                      type: 'object',
+                      properties: {
+                        id: {
+                          type: 'string',
+                          minLength: 1,
+                        },
+                        state: {
+                          type: 'object',
+                          properties: {
+                            descriptor: {
+                              type: 'object',
+                              properties: {
+                                code: {
+                                  type: 'string',
+                                  minLength: 1,
+                                  const: 'Cancelled',
+                                },
+                              },
+                              required: ['code'],
+                            },
+                          },
+                          required: ['descriptor'],
+                        },
+                        type: {
+                          type: 'string',
+                          const: 'Cancel',
+                          minLength: 1,
+                        },
+                        tags: {
+                          type: 'array',
+                          items: {
+                            type: 'object',
+                            properties: {
+                              allOf: [
+                                {
+                                  if: {
+                                    properties: {
+                                      code: {
+                                        const: 'quote_trail',
+                                      },
+                                    },
+                                  },
+                                  then: {
+                                    properties: {
+                                      list: {
+                                        type: 'array',
+                                        items: {
+                                          allOf: [
+                                            {
+                                              if: {
+                                                properties: {
+                                                  code: {
+                                                    const: 'type',
+                                                  },
+                                                },
+                                                required: ['code'],
+                                              },
+                                              then: {
+                                                properties: {
+                                                  value: {
+                                                    type: 'string',
+                                                  },
+                                                },
+                                                required: ['value'],
+                                              },
+                                            },
+                                            {
+                                              if: {
+                                                properties: {
+                                                  code: {
+                                                    const: 'id',
+                                                  },
+                                                },
+                                                required: ['code'],
+                                              },
+                                              then: {
+                                                properties: {
+                                                  value: {
+                                                    type: 'string',
+                                                  },
+                                                },
+                                                required: ['value'],
+                                              },
+                                            },
+                                            {
+                                              if: {
+                                                properties: {
+                                                  code: {
+                                                    const: 'currency',
+                                                  },
+                                                },
+                                                required: ['code'],
+                                              },
+                                              then: {
+                                                properties: {
+                                                  value: {
+                                                    type: 'string',
+                                                    const: 'INR'
+                                                  },
+                                                },
+                                                required: ['value'],
+                                              },
+                                            },
+                                            {
+                                              if: {
+                                                properties: {
+                                                  code: {
+                                                    const: 'value',
+                                                  },
+                                                },
+                                                required: ['code'],
+                                              },
+                                              then: {
+                                                properties: {
+                                                  value: {
+                                                    type: 'string',
+                                                  },
+                                                },
+                                                required: ['value'],
+                                              },
+                                            }
+                                          ],
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              ],
+                            },
+                            required: ['code', 'list'],
+                          },
+                          additionalProperties: false,
                         },
                       },
-                      required: ['code', 'list'],
                     },
-                    additionalProperties: false,
+                    then:{
+                      required: ['id', 'type', 'tags','state'],
+                    }
                   },
-                },
-                required: ['id', 'state', 'type'],
+                ],
               },
             },
             quote: {
