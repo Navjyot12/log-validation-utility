@@ -142,7 +142,7 @@ export const onUpdateSchema = {
                       properties: {
                         id: { type: 'string' },
                         '@ondc/org/provider_name': { type: 'string' },
-                        type: { type: 'string', enum: ['Cancel', 'Delivery'] },
+                        type: { type: 'string', const: 'Delivery'},
                         tracking: { type: 'boolean' },
                         '@ondc/org/TAT': { type: 'string' },
                         state: {
@@ -322,14 +322,14 @@ export const onUpdateSchema = {
                         },
                       },
                     },
-                  },
+                  }, 
                   {
                     if: {
                       type: 'object',
                       properties: {
                         id: { type: 'string' },
                         '@ondc/org/provider_name': { type: 'string' },
-                        type: { type: 'string', const: 'Return' },
+                        type: { type: 'string', enum:['Return','Cancel'] },
                         tracking: { type: 'boolean' },
                         '@ondc/org/TAT': { type: 'string' },
                         state: {

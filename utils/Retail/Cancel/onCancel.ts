@@ -465,11 +465,11 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
         logger.info(`Checking payment object in /${constants.CONFIRM}`)
 
         if (!_.isEqual(on_cancel.payment['@ondc/org/settlement_details'][0], getValue('sttlmntdtls'))) {
-          onCnclObj.sttlmntdtls = `payment settlement_details mismatch in /${constants.ON_INIT} & /${constants.CONFIRM}`
+          onCnclObj.sttlmntdtls = `payment settlement_details mismatch in /${constants.ON_INIT} & /${constants.ON_CANCEL}`
         }
 
         if (!on_cancel.hasOwnProperty('created_at') || !on_cancel.hasOwnProperty('updated_at')) {
-          onCnclObj.ordertmpstmp = `order created and updated timestamps are mandatory in /${constants.CONFIRM}`
+          onCnclObj.ordertmpstmp = `order created and updated timestamps are mandatory in /${constants.ON_CANCEL}`
         } else {
           if (!_.isEqual(on_cancel.created_at, getValue('cnfrmTmpstmp'))) {
             onCnclObj.orderCrtd = `order.created_at timestamp should match context.timestamp of confirm`
