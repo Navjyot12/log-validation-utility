@@ -548,8 +548,8 @@ curl --location 'http://localhost:3008/api/validate' \
         "on_status_pending": {},
         "on_status_packed": {},
         "on_status_picked": {},
-        "on_status_out_for_delivery": {}
-        "on_cancel": {},
+        "on_status_out_for_delivery": {},
+        "on_cancel": {}
     },
     "flow": "5"
 }'
