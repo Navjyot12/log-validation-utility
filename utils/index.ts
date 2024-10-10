@@ -545,9 +545,12 @@ export function validateLocations(locations: any[], tags: any[]) {
         Object.assign(errorObj, {radiusErr: `Radius entered should be a number`})
         
     }}
-    if (typeof radius > '500'){
-      Object.assign(errorObj, {radiusLimitErr: 'Circle radius should not exceed 500 km for serviceability, even if it is PAN India.'});
+    if (typeof radius === 'number' && radius > 500) {
+      Object.assign(errorObj, {
+          radiusLimitErr: 'Circle radius should not exceed 500 km for serviceability, even if it is PAN India.'
+      });
   }
+  
 
     for (let i = 0; i < tags.length; i++) {
       if (tags[i].code === 'serviceability') {
