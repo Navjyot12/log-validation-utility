@@ -997,23 +997,6 @@ export const checkOnsearch = (data: any) => {
           }
 
           try {
-            logger.info(`Checking fulfillment_id for item id: ${item.id}`)
-
-            if ('price' in item) {
-              const upper = parseFloat(item.price?.tags?.[0].list[1].value)
-              const lower = parseFloat(item.price?.tags?.[0].list[0].value)
-
-              if (upper > lower) {
-                const key = `prvdr${i}item${j}Price/tags/list`
-                errorObj[key] =
-                  `selling lower range of item /price/range/value with id: (${item.id}) can't be greater than the upper in /bpp/providers[${i}]/items[${j}]/`
-              }
-            }
-          } catch (error: any) {
-            logger.error(`Error while checking price range for item id: ${item.id}, error: ${error.stack}`)
-          }
-
-          try {
             if (item.fulfillment_id && !onSearchFFIdsArray[i].has(item.fulfillment_id)) {
               const key = `prvdr${i}item${j}ff`
               errorObj[key] =
@@ -1034,7 +1017,46 @@ export const checkOnsearch = (data: any) => {
           } catch (error: any) {
             logger.error(`Error while checking location_id for item id: ${item.id}, error: ${error.stack}`)
           }
-
+          try {
+            logger.info(`Checking default_selection for F&B RET11 customizations...`);
+        
+            const items = getValue('items'); 
+        
+            _.filter(items, (item) => {
+                // Check if the item has customizations (tags) and a price range
+                if (item.customizations && item.price) {
+                    const customTags = item.customizations.tags;
+                    const defaultSelection = customTags?.default_selection;
+                    
+                    const itemSellingPrice = parseFloat(item.price.value); // Selling price of the item
+        
+                    // Retrieve the customization selling price and MRP
+                    const customizationSellingPrice = parseFloat(defaultSelection.value);
+                    const customizationMRP = parseFloat(defaultSelection.maximum_value);
+        
+                    // Calculate the expected selling price and MRP for the customization + item
+                    const expectedSellingPrice = customizationSellingPrice + itemSellingPrice;
+                    const expectedMRP = customizationMRP + itemSellingPrice;
+        
+                    // Validation: Ensure that default_selection.value matches selling price of customization + item
+                    if (defaultSelection.value !== expectedSellingPrice) {
+                        const key = `item${item.id}CustomTags/default_selection/value`;
+                        errorObj[key] = `The selling price of customization + item for id: ${item.id} does not match the expected value (${expectedSellingPrice}).`;
+                    }
+        
+                    // Validation: Ensure that default_selection.maximum_value matches MRP of customization + item
+                    if (defaultSelection.maximum_value !== expectedMRP) {
+                        const key = `item${item.id}CustomTags/default_selection/maximum_value`;
+                        errorObj[key] = `The MRP of customization + item for id: ${item.id} does not match the expected MRP (${expectedMRP}).`;
+                    }
+        
+                    logger.info(`Checked default_selection for item id: ${item.id}`);
+                }
+            });
+        } catch (error: any) {
+            logger.error(`Error while checking default_selection for items, ${error.stack}`);
+        }
+        
           try {
             logger.info(`Checking consumer care details for item id: ${item.id}`)
             if ('@ondc/org/contact_details_consumer_care' in item) {
