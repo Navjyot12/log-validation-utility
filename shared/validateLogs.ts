@@ -38,7 +38,6 @@ import { checkOnStatusPacked } from '../utils/Retail/Status/onStatusPacked'
 import { checkOnStatusPicked } from '../utils/Retail/Status/onStatusPicked'
 import { checkOnStatusOutForDelivery } from '../utils/Retail/Status/onStatusOutForDelivery'
 import { checkOnStatusDelivered } from '../utils/Retail/Status/onStatusDelivered'
-import { checkOnStatusRTODelivered } from '../utils/Retail/Status/onStatusRTODelivered'
 import { checkCancel } from '../utils/Retail/Cancel/cancel'
 import { checkOnCancel } from '../utils/Retail/Cancel/onCancel'
 import checkRsfReceiverRecon from '../utils/RSF/rsfReceiverRecon'
@@ -127,7 +126,6 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
       ApiSequence.ON_STATUS_PICKED,
       ApiSequence.ON_STATUS_OUT_FOR_DELIVERY,
       ApiSequence.ON_CANCEL,
-      ApiSequence.ON_STATUS_RTO_DELIVERED
     ]
 
     const flowSixSequence = [
@@ -214,8 +212,6 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
           return checkCancel(data, msgIdSet)
         case ApiSequence.ON_CANCEL:
           return checkOnCancel(data, msgIdSet)
-        case ApiSequence.ON_STATUS_RTO_DELIVERED:
-          return checkOnStatusRTODelivered(data)
         case ApiSequence.STATUS:
           return checkStatus(data)
         case ApiSequence.ON_STATUS_PENDING:
@@ -332,7 +328,7 @@ export const IGMvalidateLogs = (data: any) => {
     }
 
     if (data[IGMApiSequence.RET_ON_ISSUE_STATUS]) {
-      const { onIssueStatusObj, isResolved } = checkOnIssueStatus(data[IGMApiSequence.RET_ON_ISSUE_STATUS])
+      const { onIssueStatusObj, isResolved } = checkOnIssueStatus(data[IGMApiSequence.RET_ON_ISSUE_STATUS])      
       retIsResolved = isResolved
       if (!_.isEmpty(onIssueStatusObj)) {
         logReport = { ...logReport, [IGMApiSequence.RET_ON_ISSUE_STATUS]: onIssueStatusObj }
@@ -426,6 +422,38 @@ export const RSFvalidateLogs = (data: any) => {
       }
     }
 
+    logger.info(logReport, 'Report Generated Successfully!!')
+    return logReport
+  } catch (error: any) {
+    logger.error(error.message)
+    return error.message
+  }
+}
+
+export const RSFvalidateLogs2 = (data: any) => {
+  let logReport: any = {}
+
+  try {
+    dropDB()
+  } catch (error) {
+    logger.error('!!Error while removing LMDB', error)
+  }
+
+  try {
+    if (data[RSFapiSequence.RECEIVER_RECON]) {
+      const receiver_recon = checkRsfReceiverRecon(data[RSFapiSequence.RECEIVER_RECON])
+      if (!_.isEmpty(receiver_recon)) {
+        logReport = { ...logReport, [RSFapiSequence.RECEIVER_RECON]: receiver_recon }
+      }
+    }
+    if (data[RSFapiSequence.ON_RECEIVER_RECON]) {
+      const on_receiver_recon = checkRsfOnReceiverRecon(data[RSFapiSequence.ON_RECEIVER_RECON])
+
+      if (!_.isEmpty(on_receiver_recon)) {
+        logReport = { ...logReport, [RSFapiSequence.ON_RECEIVER_RECON]: on_receiver_recon }
+      }
+    }
+    // Logic has to be written here !!
     logger.info(logReport, 'Report Generated Successfully!!')
     return logReport
   } catch (error: any) {

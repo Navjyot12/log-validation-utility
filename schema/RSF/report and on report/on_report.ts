@@ -30,7 +30,7 @@ const onReportSchema = {
                 },
                 country: {
                     type: 'string',
-                    enum: ['IND'], // Can add more countries if necessary
+                    enum: ['IND'],
                 },
                 core_version: {
                     type: 'string',
@@ -38,7 +38,7 @@ const onReportSchema = {
                 },
                 bap_id: {
                     type: 'string',
-                    enum: ['collectorapp.com'], // Example for idCheck
+                    enum: ['collectorapp.com'],
                 },
                 bap_uri: {
                     type: 'string',
@@ -46,7 +46,7 @@ const onReportSchema = {
                 },
                 bpp_id: {
                     type: 'string',
-                    enum: ['sa_nocs.nbbl.com'], // Example for idCheck
+                    enum: ['sa_nocs.nbbl.com'],
                 },
                 bpp_uri: {
                     type: 'string',
@@ -67,17 +67,13 @@ const onReportSchema = {
                 },
                 city: {
                     type: 'string',
-                    enum: ['*'], // Represents all cities
+                    enum: ['*'],
                 },
             },
         },
         message: {
             type: 'object',
-            required: [
-                'collector_app_id',
-                'receiver_app_id',
-                'settlement',
-            ],
+            required: ['collector_app_id', 'receiver_app_id', 'settlement'],
             properties: {
                 collector_app_id: {
                     type: 'string',
@@ -88,192 +84,140 @@ const onReportSchema = {
                     enum: ['receiverapp.com'],
                 },
                 settlement: {
-                    type: 'object',
-                    required: ['type', 'id', 'orders'],
-                    properties: {
-                        type: {
-                            type: 'string',
-                            enum: ['NP-NP'],
-                        },
-                        id: {
-                            type: 'string',
-                        },
-                        orders: {
-                            type: 'array',
-                            items: {
+                    oneOf: [
+                        {
+                            if: {
+                                properties: { type: { const: 'NIL' } },
+                            },
+                            then: {
                                 type: 'object',
-                                required: [
-                                    'id',
-                                    'inter_participant',
-                                    'collector',
-                                    'provider',
-                                    'self',
-                                ],
                                 properties: {
-                                    id: {
-                                        type: 'string',
-                                    },
-                                    inter_participant: {
-                                        type: 'object',
-                                        required: ['settled_amount', 'amount', 'status', 'reference_no', 'error'],
-                                        properties: {
-                                            settled_amount: {
-                                                type: 'object',
-                                                required: ['currency', 'value'],
-                                                properties: {
-                                                    currency: {
-                                                        type: 'string',
-                                                        enum: ['INR'],
-                                                    },
-                                                    value: {
-                                                        type: 'string',
-                                                        pattern: '^[0-9]+(\.[0-9]{1,2})?$',
-                                                    },
-                                                },
-                                            },
-                                            amount: {
-                                                type: 'object',
-                                                required: ['currency', 'value'],
-                                                properties: {
-                                                    currency: {
-                                                        type: 'string',
-                                                        enum: ['INR'],
-                                                    },
-                                                    value: {
-                                                        type: 'string',
-                                                        pattern: '^[0-9]+(\.[0-9]{1,2})?$',
-                                                    },
-                                                },
-                                            },
-                                            status: {
-                                                type: 'string',
-                                            },
-                                            reference_no: {
-                                                type: 'string',
-                                            },
-                                            error: {
-                                                type: 'object',
-                                                required: ['code', 'message'],
-                                                properties: {
-                                                    code: {
-                                                        type: 'string',
-                                                    },
-                                                    message: {
-                                                        type: 'string',
-                                                    },
-                                                },
-                                            },
-                                        },
-                                    },
-                                    collector: {
-                                        type: 'object',
-                                        required: ['amount'],
-                                        properties: {
-                                            amount: {
-                                                type: 'object',
-                                                required: ['currency', 'value'],
-                                                properties: {
-                                                    currency: {
-                                                        type: 'string',
-                                                        enum: ['INR'],
-                                                    },
-                                                    value: {
-                                                        type: 'string',
-                                                        pattern: '^[0-9]+(\.[0-9]{1,2})?$',
+                                    type: { type: 'string', const: 'NIL' },
+                                },
+                                required: ['type'],
+                            },
+                        },
+                        {
+                            if: {
+                                properties: { type: { enum: ['NP-NP', 'MISC'] } },
+                            },
+                            then: {
+                                type: 'object',
+                                required: ['type', 'id', 'orders'],
+                                properties: {
+                                    type: { type: 'string', enum: ['NP-NP', 'MISC'] },
+                                    id: { type: 'string' },
+                                    orders: {
+                                        type: 'array',
+                                        items: {
+                                            type: 'object',
+                                            required: ['id', 'inter_participant', 'collector', 'provider', 'self'],
+                                            properties: {
+                                                id: { type: 'string' },
+                                                inter_participant: {
+                                                    type: 'object',
+                                                    required: ['settled_amount', 'amount', 'status', 'reference_no', 'error'],
+                                                    properties: {
+                                                        settled_amount: {
+                                                            type: 'object',
+                                                            required: ['currency', 'value'],
+                                                            properties: {
+                                                                currency: { type: 'string', enum: ['INR'] },
+                                                                value: { type: 'string', pattern: '^[0-9]+(\\.[0-9]{1,2})?$' },
+                                                            },
+                                                        },
+                                                        amount: {
+                                                            type: 'object',
+                                                            required: ['currency', 'value'],
+                                                            properties: {
+                                                                currency: { type: 'string', enum: ['INR'] },
+                                                                value: { type: 'string', pattern: '^[0-9]+(\\.[0-9]{1,2})?$' },
+                                                            },
+                                                        },
+                                                        status: { type: 'string' },
+                                                        reference_no: { type: 'string' },
+                                                        error: {
+                                                            type: 'object',
+                                                            required: ['code', 'message'],
+                                                            properties: {
+                                                                code: { type: 'string' },
+                                                                message: { type: 'string' },
+                                                            },
+                                                        },
                                                     },
                                                 },
-                                            },
-                                        },
-                                    },
-                                    provider: {
-                                        type: 'object',
-                                        required: ['id', 'amount', 'status', 'reference_no', 'error'],
-                                        properties: {
-                                            id: {
-                                                type: 'string',
-                                            },
-                                            amount: {
-                                                type: 'object',
-                                                required: ['currency', 'value'],
-                                                properties: {
-                                                    currency: {
-                                                        type: 'string',
-                                                        enum: ['INR'],
-                                                    },
-                                                    value: {
-                                                        type: 'string',
-                                                        pattern: '^[0-9]+(\.[0-9]{1,2})?$',
+                                                collector: {
+                                                    type: 'object',
+                                                    required: ['amount'],
+                                                    properties: {
+                                                        amount: {
+                                                            type: 'object',
+                                                            required: ['currency', 'value'],
+                                                            properties: {
+                                                                currency: { type: 'string', enum: ['INR'] },
+                                                                value: { type: 'string', pattern: '^[0-9]+(\\.[0-9]{1,2})?$' },
+                                                            },
+                                                        },
                                                     },
                                                 },
-                                            },
-                                            status: {
-                                                type: 'string',
-                                            },
-                                            error: {
-                                                type: 'object',
-                                                required: ['code', 'message'],
-                                                properties: {
-                                                    code: {
-                                                        type: 'string',
-                                                    },
-                                                    message: {
-                                                        type: 'string',
-                                                    },
-                                                },
-                                            },
-                                            reference_no: {
-                                                type: 'string',
-                                            },
-                                        },
-                                    },
-                                    self: {
-                                        type: 'object',
-                                        required: ['amount', 'status', 'reference_no', 'error'],
-                                        properties: {
-                                            amount: {
-                                                type: 'object',
-                                                required: ['currency', 'value'],
-                                                properties: {
-                                                    currency: {
-                                                        type: 'string',
-                                                        enum: ['INR'],
-                                                    },
-                                                    value: {
-                                                        type: 'string',
-                                                        pattern: '^[0-9]+(\.[0-9]{1,2})?$',
+                                                provider: {
+                                                    type: 'object',
+                                                    required: ['id', 'amount', 'status', 'reference_no', 'error'],
+                                                    properties: {
+                                                        id: { type: 'string' },
+                                                        amount: {
+                                                            type: 'object',
+                                                            required: ['currency', 'value'],
+                                                            properties: {
+                                                                currency: { type: 'string', enum: ['INR'] },
+                                                                value: { type: 'string', pattern: '^[0-9]+(\\.[0-9]{1,2})?$' },
+                                                            },
+                                                        },
+                                                        status: { type: 'string' },
+                                                        error: {
+                                                            type: 'object',
+                                                            required: ['code', 'message'],
+                                                            properties: {
+                                                                code: { type: 'string' },
+                                                                message: { type: 'string' },
+                                                            },
+                                                        },
+                                                        reference_no: { type: 'string' },
                                                     },
                                                 },
-                                            },
-                                            status: {
-                                                type: 'string',
-                                            },
-                                            reference_no: {
-                                                type: 'string',
-                                            },
-                                            error: {
-                                                type: 'object',
-                                                required: ['code', 'message'],
-                                                properties: {
-                                                    code: {
-                                                        type: 'string',
-                                                    },
-                                                    message: {
-                                                        type: 'string',
+                                                self: {
+                                                    type: 'object',
+                                                    required: ['amount', 'status', 'reference_no', 'error'],
+                                                    properties: {
+                                                        amount: {
+                                                            type: 'object',
+                                                            required: ['currency', 'value'],
+                                                            properties: {
+                                                                currency: { type: 'string', enum: ['INR'] },
+                                                                value: { type: 'string', pattern: '^[0-9]+(\\.[0-9]{1,2})?$' },
+                                                            },
+                                                        },
+                                                        status: { type: 'string' },
+                                                        reference_no: { type: 'string' },
+                                                        error: {
+                                                            type: 'object',
+                                                            required: ['code', 'message'],
+                                                            properties: {
+                                                                code: { type: 'string' },
+                                                                message: { type: 'string' },
+                                                            },
+                                                        },
                                                     },
                                                 },
                                             },
                                         },
                                     },
                                 },
-                                additionalProperties: false,
                             },
-                            minItems: 1,
                         },
-                    },
-                    additionalProperties: false,
+                    ],
                 },
             },
-            additionalProperties: false,
         },
     },
     additionalProperties: false,

@@ -38,7 +38,7 @@ const reportSchema = {
                 },
                 bap_id: {
                     type: 'string',
-                    enum: ['collectorapp.com'], // Example for idCheck
+                    enum: ['collectorapp.com'],
                 },
                 bap_uri: {
                     type: 'string',
@@ -46,7 +46,7 @@ const reportSchema = {
                 },
                 bpp_id: {
                     type: 'string',
-                    enum: ['sa_nocs.nbbl.com'], // Example for idCheck
+                    enum: ['sa_nocs.nbbl.com'],
                 },
                 bpp_uri: {
                     type: 'string',
@@ -80,6 +80,42 @@ const reportSchema = {
                 },
                 ref_message_id: {
                     type: 'string',
+                },
+                // Handling conditional logic for NIL, NP-NP, MISC
+                report_type: {
+                    type: 'string',
+                    enum: ['NIL', 'NP-NP', 'MISC'],
+                },
+                details: {
+                    oneOf: [
+                        {
+                            if: {
+                                properties: { report_type: { const: 'NIL' } },
+                            },
+                            then: {
+                                type: 'object',
+                                properties: {
+                                    report_type: { type: 'string', const: 'NIL' },
+                                    note: { type: 'string', enum: ['No details available'] },
+                                },
+                                required: ['report_type', 'note'],
+                            },
+                        },
+                        {
+                            if: {
+                                properties: { report_type: { enum: ['NP-NP', 'MISC'] } },
+                            },
+                            then: {
+                                type: 'object',
+                                properties: {
+                                    report_type: { type: 'string', enum: ['NP-NP', 'MISC'] },
+                                    description: { type: 'string' },
+                                    source: { type: 'string' },
+                                },
+                                required: ['report_type', 'description'],
+                            },
+                        },
+                    ],
                 },
             },
         },
