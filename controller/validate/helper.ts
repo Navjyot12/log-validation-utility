@@ -28,6 +28,7 @@ const getEnumForDomain = (path: string) => {
   if (path.includes('validate') || path.includes('retail')) return DOMAIN.RETAIL
   if (path.includes('igm')) return DOMAIN.IGM
   if (path.includes('rsf')) return DOMAIN.RSF
+  if (path.includes('rsf2')) return DOMAIN.RSF2
   throw new Error('Domain could not be detected')
 }
 const validateRetail = async (

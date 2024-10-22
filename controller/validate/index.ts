@@ -162,4 +162,19 @@ const controller = {
   },
 }
 
+break
+        case DOMAIN.RSF2.:
+          {
+            const { response, success, message } = await helper.validateRSF(payload, version)
+            result = { response, success, message }
+          }
+
+          break
+        default:
+          throw new Error('Internal server error')
+      }
+
+      const { response, success, message } = result
+
+
 export default controller
