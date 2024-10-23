@@ -60,6 +60,7 @@ const newReconPayloadSchema = {
                 bap_uri: {
                     type: 'string',
                     format: 'uri',
+                    errorMessage: 'Invalid BAP URI format',
                 },
                 bpp_id: {
                     type: 'string',
@@ -67,6 +68,7 @@ const newReconPayloadSchema = {
                 bpp_uri: {
                     type: 'string',
                     format: 'uri',
+                    errorMessage: 'Invalid BPP URI format',
                 },
                 transaction_id: {
                     type: 'string',
@@ -76,7 +78,8 @@ const newReconPayloadSchema = {
                 },
                 timestamp: {
                     type: 'string',
-                    format: 'date-time',
+                    format: 'rfc3339-date-time',
+                    errorMessage: 'Timestamp must be in RFC3339 format',
                 },
                 ttl: {
                     type: 'string',
@@ -94,12 +97,7 @@ const newReconPayloadSchema = {
                     type: 'array',
                     items: {
                         type: 'object',
-                        required: [
-                            'id',
-                            'amount',
-                            'recon_accord',
-                            'settlements',
-                        ],
+                        required: ['id', 'amount', 'recon_accord', 'settlements'],
                         properties: {
                             id: {
                                 type: 'string',
@@ -129,7 +127,7 @@ const newReconPayloadSchema = {
                                         'payment_id',
                                         'status',
                                         'amount',
-                                        'commision',
+                                        'commission',
                                         'withholding_amount',
                                         'tcs',
                                         'tds',
@@ -162,7 +160,7 @@ const newReconPayloadSchema = {
                                                 },
                                             },
                                         },
-                                        commision: {
+                                        commission: {
                                             type: 'object',
                                             required: ['diff_value', 'currency', 'value'],
                                             properties: {
@@ -228,7 +226,8 @@ const newReconPayloadSchema = {
                                         },
                                         updated_at: {
                                             type: 'string',
-                                            format: 'date-time',
+                                            format: 'rfc3339-date-time',
+                                            errorMessage: 'Invalid date-time format',
                                         },
                                         settlement_ref_no: {
                                             type: 'string',
@@ -243,7 +242,7 @@ const newReconPayloadSchema = {
             },
         },
     },
-    additionalProperties: false,
+    additionalProperties: false, 
 };
 
 export default newReconPayloadSchema;

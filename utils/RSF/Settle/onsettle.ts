@@ -10,10 +10,6 @@ const checksSettleData = (data: any) => {
   
     // Check if the data object is empty or undefined
     if (!data || isObjectEmpty(data)) {
-      return { [RSFapiSequence.SETTLE]: 'JSON cannot be empty' }
+      return { [RSFapiSequence.ON_SETTLE]: 'JSON cannot be empty' }
     }
-}
-const { message, context }: any = data
-if (!message || !context || !message.order || isObjectEmpty(message) || isObjectEmpty(message.order)) {
-  return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
 }

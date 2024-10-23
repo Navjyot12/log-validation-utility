@@ -43,6 +43,12 @@ export default Object.freeze({
   RET_ONISSUE_STATUS: 'on_issue_status',
   RECEIVER_RECON: 'receiver_recon',
   ON_RECEIVER_RECON: 'on_receiver_recon',
+  SETTLE_COLLECTOR: 'settle',
+  ON_SETTLE_COLLECTOR: 'on_settle',
+  SETTLE_RECIEVER: 'settle',
+  ON_SETTLE_RECIEVER: 'on_settle',
+  REPORT: 'report',
+  ON_REPORT: 'on_report'
 })
 
 export const ApiSequence = {
@@ -283,6 +289,12 @@ export const IGMApiSequence = {
 export const RSFapiSequence = {
   RECEIVER_RECON: 'receiver_recon',
   ON_RECEIVER_RECON: 'on_receiver_recon',
+  SETTLE_COLLECTOR: 'settle',
+  ON_SETTLE_COLLECTOR: 'on_settle',
+  SETTLE_RECIEVER: 'settle',
+  ON_SETTLE_RECIEVER: 'on_settle',
+  REPORT: 'report',
+  ON_REPORT: 'on_report'
 }
 
 export const actionsArray = [

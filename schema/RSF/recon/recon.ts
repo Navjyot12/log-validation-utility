@@ -32,7 +32,7 @@ const newPayloadSchema = {
                             properties: {
                                 code: {
                                     type: 'string',
-                                    enum: ['IND'],
+                                    enum: ['IND'], 
                                 },
                             },
                         },
@@ -73,10 +73,13 @@ const newPayloadSchema = {
                 },
                 timestamp: {
                     type: 'string',
-                    format: 'date-time',
+                    format: 'rfc3339-date-time', 
+                    errorMessage: 'Timestamp must be in RFC3339 format.',
                 },
                 ttl: {
                     type: 'string',
+                    format: 'duration', 
+                    errorMessage: 'TTL must be in RFC3339 duration format.',
                 },
                 key: {
                     type: 'string',
@@ -102,10 +105,11 @@ const newPayloadSchema = {
                                 properties: {
                                     currency: {
                                         type: 'string',
-                                        enum: ['INR'],
+                                        enum: ['INR'], 
                                     },
                                     value: {
                                         type: 'string',
+                                        pattern: '^[0-9]+(\\.[0-9]{1,2})?$', 
                                     },
                                 },
                             },
@@ -145,6 +149,7 @@ const newPayloadSchema = {
                                                 },
                                                 value: {
                                                     type: 'string',
+                                                    pattern: '^[0-9]+(\\.[0-9]{1,2})?$',
                                                 },
                                             },
                                         },
@@ -158,6 +163,7 @@ const newPayloadSchema = {
                                                 },
                                                 value: {
                                                     type: 'string',
+                                                    pattern: '^[0-9]+(\\.[0-9]{1,2})?$',
                                                 },
                                             },
                                         },
@@ -171,6 +177,7 @@ const newPayloadSchema = {
                                                 },
                                                 value: {
                                                     type: 'string',
+                                                    pattern: '^[0-9]+(\\.[0-9]{1,2})?$',
                                                 },
                                             },
                                         },
@@ -184,6 +191,7 @@ const newPayloadSchema = {
                                                 },
                                                 value: {
                                                     type: 'string',
+                                                    pattern: '^[0-9]+(\\.[0-9]{1,2})?$',
                                                 },
                                             },
                                         },
@@ -197,12 +205,13 @@ const newPayloadSchema = {
                                                 },
                                                 value: {
                                                     type: 'string',
+                                                    pattern: '^[0-9]+(\\.[0-9]{1,2})?$',
                                                 },
                                             },
                                         },
                                         updated_at: {
                                             type: 'string',
-                                            format: 'date-time',
+                                            format: 'rfc3339-date-time', 
                                         },
                                         settlement_ref_no: {
                                             type: 'string',
