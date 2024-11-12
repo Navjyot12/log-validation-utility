@@ -42,6 +42,9 @@ import { checkCancel } from '../utils/Retail/Cancel/cancel'
 import { checkOnCancel } from '../utils/Retail/Cancel/onCancel'
 import checkRsfReceiverRecon from '../utils/RSF/rsfReceiverRecon'
 import checkRsfOnReceiverRecon from '../utils/RSF/rsfOnReciverRecon'
+import checksSettleData from 'utils/RSF/Settle/settle'
+import checksonSettleData from '../utils/RSF/Settle/onsettle'
+
 
 export const validateLogs = async (data: any, domain: string, flow: string) => {
   const msgIdSet = new Set()
@@ -430,37 +433,56 @@ export const RSFvalidateLogs = (data: any) => {
   }
 }
 
-export const RSFvalidateLogs2 = (data: any) => {
-  let logReport: any = {}
+export const checksData = (data: any) => {
+  let logReport: any = {};
 
   try {
-    dropDB()
+    dropDB();
   } catch (error) {
-    logger.error('!!Error while removing LMDB', error)
+    logger.error('!!Error while removing LMDB', error);
   }
 
   try {
-    if (data[RSFapiSequence.RECEIVER_RECON]) {
-      const receiver_recon = checkRsfReceiverRecon(data[RSFapiSequence.RECEIVER_RECON])
-      if (!_.isEmpty(receiver_recon)) {
-        logReport = { ...logReport, [RSFapiSequence.RECEIVER_RECON]: receiver_recon }
+    // Check for Settle Collector
+    if (data[RSFapiSequence.SETTLE_COLLECTOR]) {
+      const settleCollector = checksSettleData(data[RSFapiSequence.SETTLE_COLLECTOR]);
+      if (!_.isEmpty(settleCollector)) {
+        logReport = { ...logReport, [RSFapiSequence.SETTLE_COLLECTOR]: settleCollector };
       }
     }
-    if (data[RSFapiSequence.ON_RECEIVER_RECON]) {
-      const on_receiver_recon = checkRsfOnReceiverRecon(data[RSFapiSequence.ON_RECEIVER_RECON])
 
-      if (!_.isEmpty(on_receiver_recon)) {
-        logReport = { ...logReport, [RSFapiSequence.ON_RECEIVER_RECON]: on_receiver_recon }
+    // Check for Settle Reciever
+    if (data[RSFapiSequence.SETTLE_RECIEVER]) {
+      const settle = checksSettleData(data[RSFapiSequence.SETTLE_RECIEVER]);
+      if (!_.isEmpty(settle)) {
+        logReport = { ...logReport, [RSFapiSequence.SETTLE_RECIEVER]: settle };
       }
     }
-    // Logic has to be written here !!
-    logger.info(logReport, 'Report Generated Successfully!!')
-    return logReport
+
+    // Check for On Settle
+    if (data[RSFapiSequence.ON_SETTLE_COLLECTOR]) {
+      const onSettle = checksonSettleData(data[RSFapiSequence.ON_SETTLE_COLLECTOR]);
+      if (!_.isEmpty(onSettle)) {
+        logReport = { ...logReport, [RSFapiSequence.ON_SETTLE_COLLECTOR]: onSettle };
+      }
+    }
+
+    // Check for On Settle Reciever
+    if (data[RSFapiSequence.ON_SETTLE_RECIEVER]) {
+      const onSettle = checksonSettleData(data[RSFapiSequence.ON_SETTLE_RECIEVER]);
+      if (!_.isEmpty(onSettle)) {
+        logReport = { ...logReport, [RSFapiSequence.ON_SETTLE_RECIEVER]: onSettle };
+      }
+    }
+
+    logger.info(logReport, 'Settle Report Generated Successfully!!');
+    return logReport;
   } catch (error: any) {
-    logger.error(error.message)
-    return error.message
+    logger.error(error.message);
+    return error.message;
   }
-}
+};
+
 
 export const validateActionSchema = (data: any, domain: string, action: string) => {
   const errorObj: any = {}

@@ -294,7 +294,7 @@ export const RSFapiSequence = {
   SETTLE_RECIEVER: 'settle',
   ON_SETTLE_RECIEVER: 'on_settle',
   REPORT: 'report',
-  ON_REPORT: 'on_report'
+  ON_REPORT: 'on_report',
 }
 
 export const actionsArray = [
