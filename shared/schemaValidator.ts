@@ -39,6 +39,8 @@ import receiverReconSchema from '../schema/RSF/receiverReconSchema'
 import onReceiverReconSchema from '../schema/RSF/onReciverReconSchema'
 import settlementSchema from '../schema/RSF/settle and on_settle/settle'
 import onsettlenentSchema from '../schema/RSF/settle and on_settle/on_settle'
+import reportSchema from 'schema/RSF/report and on report/report'
+import onreportSchema from 'schema/RSF/report and on report/on_report'
 import { findProviderLocation } from '../utils'
 
 const ajv = new Ajv({
@@ -869,6 +871,16 @@ const validate_schema_on_settle_for_json = (data: any) => {
   const error_list = validate_schema(data,  onsettlenentSchema)
   return formatted_error(error_list)
 }
+const validate_schema_report_for_json = (data: any) => {
+  const error_list = validate_schema(data, reportSchema);
+  return formatted_error(error_list);
+};
+const validate_schema_on_report_for_json = (data: any) => {
+  const error_list = validate_schema(data, onreportSchema);
+  return formatted_error(error_list);
+};
+
+
 const validate_schema_receiver_recon_for_json = (data: any) => {
   const error_list = validate_schema(data, receiverReconSchema)
   return formatted_error(error_list)
@@ -1135,6 +1147,8 @@ export default {
   validate_schema_on_settle_for_json ,
   validate_schema_receiver_recon_for_json,
   validate_schema_on_receiver_recon_for_json,
+  validate_schema_report_for_json,
+  validate_schema_on_report_for_json,
   ...TRV10Validator,
   ...FISValidator,
 }
