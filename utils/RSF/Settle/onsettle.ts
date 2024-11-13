@@ -2,7 +2,7 @@ import constants, { RSFapiSequence } from '../../../constants/index'
 import _ from 'lodash';
 import { isObjectEmpty } from '../../index';
 import { validateSchema } from '../../index';
-import { logger } from 'shared/logger';
+import { logger } from '../../../shared/logger';
 import { CompareTimeStamps } from  '../rsfHelpers';
 
 const checksonSettleData = (data: any) => {

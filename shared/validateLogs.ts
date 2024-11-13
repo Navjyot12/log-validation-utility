@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import { dropDB, setValue } from '../shared/dao'
-import { logger } from './logger'
+import { logger } from '../shared/logger'
 import { ApiSequence, retailDomains, IGMApiSequence, RSFapiSequence } from '../constants'
 import { validateSchema, isObjectEmpty } from '../utils'
 import { checkOnsearchFullCatalogRefresh } from '../utils/Retail/RET11_onSearch/onSearch'
@@ -42,10 +42,10 @@ import { checkCancel } from '../utils/Retail/Cancel/cancel'
 import { checkOnCancel } from '../utils/Retail/Cancel/onCancel'
 import checkRsfReceiverRecon from '../utils/RSF/rsfReceiverRecon'
 import checkRsfOnReceiverRecon from '../utils/RSF/rsfOnReciverRecon'
-import checksSettleData from 'utils/RSF/Settle/settle'
+import checksSettleData from '../utils/RSF/Settle/settle'
 import checksonSettleData from '../utils/RSF/Settle/onsettle'
-
-
+import checksReportData from "../utils/RSF/Report/report"
+import checksOnReportData from "../utils/RSF/Report/on_report"
 export const validateLogs = async (data: any, domain: string, flow: string) => {
   const msgIdSet = new Set()
   const quoteTrailItemsSet = new Set()
@@ -474,6 +474,23 @@ export const checksData = (data: any) => {
         logReport = { ...logReport, [RSFapiSequence.ON_SETTLE_RECIEVER]: onSettle };
       }
     }
+
+    // Check for report
+    if (data[RSFapiSequence.REPORT]) {
+      const report = checksReportData(data[RSFapiSequence.REPORT]);
+      if (!_.isEmpty(report)) {
+          logReport = { ...logReport, [RSFapiSequence.REPORT]: report };
+      }
+  }
+  
+  // Check for on_report
+  if (data[RSFapiSequence.ON_REPORT]) {
+    const onReport = checksOnReportData(data[RSFapiSequence.ON_REPORT]);
+    if (!_.isEmpty(onReport)) {
+        logReport = { ...logReport, [RSFapiSequence.ON_REPORT]: onReport };
+    }
+}
+
 
     logger.info(logReport, 'Settle Report Generated Successfully!!');
     return logReport;
