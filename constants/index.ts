@@ -289,10 +289,10 @@ export const IGMApiSequence = {
 export const RSFapiSequence = {
   RECEIVER_RECON: 'receiver_recon',
   ON_RECEIVER_RECON: 'on_receiver_recon',
-  SETTLE_COLLECTOR: 'settle',
-  ON_SETTLE_COLLECTOR: 'on_settle',
-  SETTLE_RECIEVER: 'settle',
-  ON_SETTLE_RECIEVER: 'on_settle',
+  SETTLE_COLLECTOR: 'settle_collector',
+  ON_SETTLE_COLLECTOR: 'on_settle_collector',
+  SETTLE_RECIEVER: 'settle_receiver',
+  ON_SETTLE_RECIEVER: 'on_settle_receiver',
   REPORT: 'report',
   ON_REPORT: 'on_report',
 }
@@ -361,6 +361,11 @@ export const retailDomains = [
   'ONDC:AGR10',
   'ONDC:RET1A'
 ]
+
+export const rsfDomains = [
+  'ONDC:NTS10'
+]
+
 export const ROUTING_ENUMS = ['P2P', 'P2H2P']
 export const MOB_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
 export const ON_DEMAND_VEHICLE = ['AUTO_RICKSHAW', 'CAB']

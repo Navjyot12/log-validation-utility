@@ -59,6 +59,10 @@ const controller = {
           break
         case DOMAIN.RSF:
           {
+            if (version === "2.0.0") {
+              const { response, success, message } = await helper.validateRSF2(domain, payload, version, flow)
+              result = { response, success, message }
+            }
             const { response, success, message } = await helper.validateRSF(payload, version)
             result = { response, success, message }
           }

@@ -39,10 +39,9 @@ import receiverReconSchema from '../schema/RSF/receiverReconSchema'
 import onReceiverReconSchema from '../schema/RSF/onReciverReconSchema'
 import settlementSchema from '../schema/RSF/settle and on_settle/settle'
 import onsettlenentSchema from '../schema/RSF/settle and on_settle/on_settle'
-import reportSchema from 'schema/RSF/report and on report/report'
-import onreportSchema from 'schema/RSF/report and on report/on_report'
+import reportSchema from '../schema/RSF/report and on report/report'
+import onreportSchema from '../schema/RSF/report and on report/on_report'
 import { findProviderLocation } from '../utils'
-
 const ajv = new Ajv({
   allErrors: true,
   strict: 'log',

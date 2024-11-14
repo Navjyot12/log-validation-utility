@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { dropDB, setValue } from '../shared/dao'
 import { logger } from '../shared/logger'
-import { ApiSequence, retailDomains, IGMApiSequence, RSFapiSequence } from '../constants'
+import { ApiSequence, retailDomains, IGMApiSequence, RSFapiSequence, rsfDomains } from '../constants'
 import { validateSchema, isObjectEmpty } from '../utils'
 import { checkOnsearchFullCatalogRefresh } from '../utils/Retail/RET11_onSearch/onSearch'
 import { checkSelect } from '../utils/Retail/Select/select'
@@ -331,7 +331,7 @@ export const IGMvalidateLogs = (data: any) => {
     }
 
     if (data[IGMApiSequence.RET_ON_ISSUE_STATUS]) {
-      const { onIssueStatusObj, isResolved } = checkOnIssueStatus(data[IGMApiSequence.RET_ON_ISSUE_STATUS])      
+      const { onIssueStatusObj, isResolved } = checkOnIssueStatus(data[IGMApiSequence.RET_ON_ISSUE_STATUS])
       retIsResolved = isResolved
       if (!_.isEmpty(onIssueStatusObj)) {
         logReport = { ...logReport, [IGMApiSequence.RET_ON_ISSUE_STATUS]: onIssueStatusObj }
@@ -433,9 +433,10 @@ export const RSFvalidateLogs = (data: any) => {
   }
 }
 
-export const checksData = (data: any) => {
+export const RSFvalidateLogs2 = (data: any, domain: string, flow: string) => {
   let logReport: any = {};
-
+  setValue('flow', flow)
+  setValue('domain', domain.split(':')[1])
   try {
     dropDB();
   } catch (error) {
@@ -443,53 +444,106 @@ export const checksData = (data: any) => {
   }
 
   try {
+    setValue('domain', domain.split(':')[1])
+    const validFlows = ['1']
+
+    const flowOneSequence = [
+      RSFapiSequence.SETTLE_COLLECTOR,
+      RSFapiSequence.ON_SETTLE_COLLECTOR,
+      RSFapiSequence.SETTLE_RECIEVER,
+      RSFapiSequence.ON_SETTLE_RECIEVER
+    ]
+
+    const processApiSequence = (apiSequence: any, data: any, logReport: any, flow: string) => {
+      if (validFlows.includes(flow)) {
+        apiSequence.forEach((apiSeq: any) => {
+          if (data[apiSeq]) {
+            const resp = getResponse(apiSeq, data[apiSeq])
+            if (!_.isEmpty(resp)) {
+              logReport = { ...logReport, [apiSeq]: resp }
+            }
+          } else {
+            logReport = { ...logReport, [apiSeq]: `Missing required data of : ${apiSeq}` }
+          }
+        })
+        logger.info(logReport, 'Report Generated Successfully!!')
+        return logReport
+      } else {
+        return { invldFlow: 'Provided flow is invalid' }
+      }
+    }
+    const getResponse = (apiSeq: any, data: any) => {
+      switch (apiSeq) {
+        case RSFapiSequence.SETTLE_COLLECTOR:
+        case RSFapiSequence.SETTLE_RECIEVER:
+          return checksSettleData(data)
+        case RSFapiSequence.ON_SETTLE_COLLECTOR:
+        case RSFapiSequence.ON_SETTLE_RECIEVER:
+          return checksonSettleData(data)
+        case RSFapiSequence.REPORT:
+          return checksReportData(data)
+        case RSFapiSequence.ON_REPORT:
+          return checksOnReportData(data)
+        default:
+          return null
+      }
+    }
+    switch (flow) {
+      case FLOW.FLOW1:
+        logReport = processApiSequence(flowOneSequence, data, logReport, flow)
+        break
+    }
+
+    if (!rsfDomains.includes(domain)) {
+      return 'Domain should be one of the 2.0.0 rsf domains'
+    }
     // Check for Settle Collector
-    if (data[RSFapiSequence.SETTLE_COLLECTOR]) {
-      const settleCollector = checksSettleData(data[RSFapiSequence.SETTLE_COLLECTOR]);
-      if (!_.isEmpty(settleCollector)) {
-        logReport = { ...logReport, [RSFapiSequence.SETTLE_COLLECTOR]: settleCollector };
-      }
-    }
+    // if (data[RSFapiSequence.SETTLE_COLLECTOR]) {
+    //   const settleCollector = checksSettleData(data[RSFapiSequence.SETTLE_COLLECTOR]);
+    //   if (!_.isEmpty(settleCollector)) {
+    //     logReport = { ...logReport, [RSFapiSequence.SETTLE_COLLECTOR]: settleCollector };
+    //   }
+    // }
 
-    // Check for Settle Reciever
-    if (data[RSFapiSequence.SETTLE_RECIEVER]) {
-      const settle = checksSettleData(data[RSFapiSequence.SETTLE_RECIEVER]);
-      if (!_.isEmpty(settle)) {
-        logReport = { ...logReport, [RSFapiSequence.SETTLE_RECIEVER]: settle };
-      }
-    }
+    // // Check for Settle Reciever
+    // if (data[RSFapiSequence.SETTLE_RECIEVER]) {
+    //   const settle = checksSettleData(data[RSFapiSequence.SETTLE_RECIEVER]);
+    //   if (!_.isEmpty(settle)) {
+    //     logReport = { ...logReport, [RSFapiSequence.SETTLE_RECIEVER]: settle };
+    //   }
+    // }
 
-    // Check for On Settle
-    if (data[RSFapiSequence.ON_SETTLE_COLLECTOR]) {
-      const onSettle = checksonSettleData(data[RSFapiSequence.ON_SETTLE_COLLECTOR]);
-      if (!_.isEmpty(onSettle)) {
-        logReport = { ...logReport, [RSFapiSequence.ON_SETTLE_COLLECTOR]: onSettle };
-      }
-    }
+    // // Check for On Settle
+    // if (data[RSFapiSequence.ON_SETTLE_COLLECTOR]) {
+    //   const onSettle = checksonSettleData(data[RSFapiSequence.ON_SETTLE_COLLECTOR]);
+    //   if (!_.isEmpty(onSettle)) {
+    //     logReport = { ...logReport, [RSFapiSequence.ON_SETTLE_COLLECTOR]: onSettle };
+    //   }
+    // }
 
-    // Check for On Settle Reciever
-    if (data[RSFapiSequence.ON_SETTLE_RECIEVER]) {
-      const onSettle = checksonSettleData(data[RSFapiSequence.ON_SETTLE_RECIEVER]);
-      if (!_.isEmpty(onSettle)) {
-        logReport = { ...logReport, [RSFapiSequence.ON_SETTLE_RECIEVER]: onSettle };
-      }
-    }
+    // // Check for On Settle Reciever
+    // if (data[RSFapiSequence.ON_SETTLE_RECIEVER]) {
+    //   const onSettle = checksonSettleData(data[RSFapiSequence.ON_SETTLE_RECIEVER]);
+    //   if (!_.isEmpty(onSettle)) {
+    //     logReport = { ...logReport, [RSFapiSequence.ON_SETTLE_RECIEVER]: onSettle };
+    //   }
+    // }
 
-    // Check for report
-    if (data[RSFapiSequence.REPORT]) {
-      const report = checksReportData(data[RSFapiSequence.REPORT]);
-      if (!_.isEmpty(report)) {
-          logReport = { ...logReport, [RSFapiSequence.REPORT]: report };
-      }
-  }
-  
-  // Check for on_report
-  if (data[RSFapiSequence.ON_REPORT]) {
-    const onReport = checksOnReportData(data[RSFapiSequence.ON_REPORT]);
-    if (!_.isEmpty(onReport)) {
-        logReport = { ...logReport, [RSFapiSequence.ON_REPORT]: onReport };
-    }
-}
+    // // Check for report
+    // if (data[RSFapiSequence.REPORT]) {
+    //   const report = checksReportData(data[RSFapiSequence.REPORT]);
+    //   if (!_.isEmpty(report)) {
+    //     logReport = { ...logReport, [RSFapiSequence.REPORT]: report };
+    //   }
+    // }
+
+    // // Check for on_report
+    // if (data[RSFapiSequence.ON_REPORT]) {
+    //   const onReport = checksOnReportData(data[RSFapiSequence.ON_REPORT]);
+    //   if (!_.isEmpty(onReport)) {
+    //     logReport = { ...logReport, [RSFapiSequence.ON_REPORT]: onReport };
+    //   }
+    // }
 
 
     logger.info(logReport, 'Settle Report Generated Successfully!!');

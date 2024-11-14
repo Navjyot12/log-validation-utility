@@ -2,7 +2,7 @@ import _ from 'lodash'
 import { sign, hash } from '../../shared/crypto'
 import { logger } from '../../shared/logger'
 import { DOMAIN, ERROR_MESSAGE } from '../../shared/types'
-import { IGMvalidateLogs, validateLogs, RSFvalidateLogs } from '../../shared/validateLogs'
+import { IGMvalidateLogs, validateLogs, RSFvalidateLogs, RSFvalidateLogs2 } from '../../shared/validateLogs'
 import { validateLogsForFIS12 } from '../../shared/Actions/FIS12Actions'
 import { validateLogsForMobility } from '../../shared/Actions/mobilityActions'
 import { validateLogsForMetro } from '../../shared/Actions/metroActions'
@@ -181,20 +181,37 @@ const validateRSF = async (payload: string, version: string) => {
         success = true
         message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
       }
-
-      break
-    case '2.0.0':
-      response = RSFvalidateLogs(payload)
-
-      if (_.isEmpty(response)) {
-        success = true
-        message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
-      }
-
       break
     default:
       message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_VERSION
       logger.warn('Invalid Version!!')
+  }
+
+  return { response, success, message }
+}
+
+const validateRSF2 = async (domain: string,
+  payload: string,
+  _version: string,
+  flow: string) => {
+  console.log("Hello=======>")
+
+  let response: any
+  let success = false
+  let message = ERROR_MESSAGE.LOG_VERIFICATION_UNSUCCESSFUL
+  if (!flow) {
+    message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_PAYLOAD_RSF
+    return { response, success, message }
+  }
+  response = RSFvalidateLogs2(payload, domain, flow)
+
+  if (_.isEmpty(response)) {
+    success = true
+    message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
+  }
+  else {
+    message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_VERSION
+    logger.warn('Invalid Version!!')
   }
 
   return { response, success, message }
@@ -206,6 +223,7 @@ export default {
   validateMobility,
   validateRetail,
   validateRSF,
+  validateRSF2,
   getEnumForDomain,
   createSignature,
 }
