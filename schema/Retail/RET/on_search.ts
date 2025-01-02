@@ -112,7 +112,7 @@ export const onSearchSchema = {
                 symbol: {
                   type: 'string',
                   format: 'url',
-                  errorMessage: 'descriptor/symbol should be URLs or can be empty strings as well',
+                  errorMessage: 'descriptor/symbol should be URLs or can be empty array as well',
                 },
                 short_desc: {
                   type: 'string',
