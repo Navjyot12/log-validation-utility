@@ -698,6 +698,7 @@ export enum FLOW {
   FLOW4 = '4',
   FLOW5 = '5',
   FLOW6 = '6',
+  FLOW2A = '2A'
 }
 
 export enum statutory_reqs {
