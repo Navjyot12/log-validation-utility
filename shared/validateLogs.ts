@@ -158,6 +158,21 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
       ApiSequence.ON_UPDATE_LIQUIDATED,
       ApiSequence.UPDATE_SETTLEMENT_LIQUIDATED,
     ]
+    const flowTwoASequence = [
+      ApiSequence.SEARCH,
+      ApiSequence.ON_SEARCH,
+      ApiSequence.SELECT,
+      ApiSequence.ON_SELECT,
+      ApiSequence.INIT,
+      ApiSequence.ON_INIT,
+      ApiSequence.CONFIRM,
+      ApiSequence.ON_CONFIRM,
+      ApiSequence.ON_STATUS_PENDING,
+      ApiSequence.ON_STATUS_PACKED,
+      ApiSequence.ON_STATUS_PICKED,
+      ApiSequence.ON_STATUS_OUT_FOR_DELIVERY,
+      ApiSequence.ON_STATUS_DELIVERED,
+    ]
 
     const processApiSequence = (apiSequence: any, data: any, logReport: any, msgIdSet: any, flow: string) => {
       if (validFlows.includes(flow)) {
@@ -335,7 +350,7 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
         logReport = processApiSequence(flowSixSequence, data, logReport, msgIdSet, flow)
         break
       case FLOW.FLOW2A:
-        logReport = processApiSequence(flowTwoSequence, data, logReport, msgIdSet, flow)
+        logReport = processApiSequence(flowTwoASequence, data, logReport, msgIdSet, flow)
         break
     }
   } catch (error: any) {
