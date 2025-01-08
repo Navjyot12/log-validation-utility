@@ -414,21 +414,28 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
     }
 
     try {
-      logger.info(`Checking if transaction_id is present in message.order.payment`)
-      const payment = confirm.payment
-
-      // Skip the transaction_id check for 2A flow
-      if ('2A') {
-        const status = payment_status(payment)
-        if (!status) {
-          cnfrmObj['message/order/transaction_id'] = `Transaction_id missing in message/order/payment`
-        }
+      logger.info('Checking if transaction_id is present in message.order.payment');
+      
+      const payment = confirm.payment;
+      
+      // Check if txn_id is unexpectedly present in the /confirm object (should not be there)
+      if (cnfrmObj['message/order/transaction_id']) {
+        cnfrmObj['message/order/transaction_id'] = 'Unexpected txn_id found in message/order/confirm';
       } else {
-        logger.info('Skipping transaction_id check for 2A flow')
+        // Skip the transaction_id check for 2A flow
+        if ("2A") {
+          const status = payment_status(payment);
+          if (!status) {
+            cnfrmObj['message/order/transaction_id'] = 'Transaction_id missing in message/order/payment';
+          }
+        } else {
+          logger.info('Skipping transaction_id check for 2A flow');
+        }
       }
     } catch (err: any) {
-      logger.error(`Error while checking transaction is in message.order.payment`)
+      logger.error('Error while checking transaction in message/order/payment: ' + err.message);
     }
+    
     //Payment details for 2A Flow
     try {
       if ('2A') {
