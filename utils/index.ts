@@ -1011,8 +1011,8 @@ export const mapCancellationID = (cancelled_by: string, reason_id: string, error
 
 export const payment_status = (payment: any) => {
   const errorObj: any = {};
-  if ('2A' && payment.status === 'PAID') {
-    errorObj.message = `${payment.status} cannot be Paid for 2A flow (Cash on Delivery)`;
+  if ("2A" && payment.status === 'PAID') {
+    errorObj.message = `Cannot be ${payment.status} for 2A flow (Cash on Delivery)`;
     return errorObj;
   }
 

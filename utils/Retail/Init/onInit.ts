@@ -567,7 +567,25 @@ export const checkOnInit = (data: any) => {
     } catch (err: any) {
       logger.error(`Error while checking transaction is in message.order.payment`)
     }
-    
+    try {
+      logger.info(`Checking if the amount is paid or not`)
+      const payment = on_init.payment
+      const status = payment_status(payment);
+  
+      if (status && status.message) {
+        logger.error(status.message);
+  
+        onInitObj["message/order/payment"] = status.message;
+      } else {
+        logger.info("Payment status is valid.");
+      }
+    } catch (err: any) {
+      logger.error(`Error while handling payment status: ${err.stack}`);
+  
+      onInitObj["message/order/payment"] =
+        "An unexpected error occurred while processing the payment status.";
+    }
+  
 
     try {
       logger.info(`Validating tags`)
