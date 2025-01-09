@@ -453,12 +453,30 @@ export const checkOnInit = (data: any) => {
 
       if (!validSettlementBasis.includes(settlementBasis)) {
         onInitObj.settlementBasis = `Invalid settlement basis in /${constants.ON_INIT}. Expected one of: ${validSettlementBasis.join(', ')}`
-        // logger.info(`Invalid settlement basis in /on_init`);
+        
       }
     } catch (error: any) {
       logger.error(`!!Error while checking settlement basis in /${constants.ON_INIT}, ${error.stack}`)
     }
-
+    try {
+      logger.info(`Checking Settlement Window in /${constants.ON_INIT}`);
+    
+      const validSettlementWindow = {
+        code: "SETTLEMENT_WINDOW",
+        type: "time",
+        value: /^PT\d+[MH]$/, 
+      };
+    
+      const settlementWindow = on_init.payment['@ondc/org/settlement_window'];
+    
+      if (!validSettlementWindow.value.test(settlementWindow)) {
+        onInitObj.settlementWindow = `Invalid settlement window in /${constants.ON_INIT}. Expected format: PTd+[MH] (e.g., PT1H, PT30M).`;
+      }
+    
+    } catch (err: any) {
+      logger.error('Error while checking settlement window: ' + err.message);
+    }
+    
     try {
       logger.info(`checking payment object in /${constants.ON_INIT}`)
       if (on_init.payment['@ondc/org/settlement_details'][0]['settlement_counterparty'] != 'seller-app') {
